@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { WorldViewModel, WorldSelectors } from './view-model/world.selectors';
@@ -20,7 +20,7 @@ import * as d3 from "d3";
   templateUrl: './countries-display.component.html',
   styleUrl: './countries-display.component.scss'
 })
-export class CountriesDisplayComponent {
+export class CountriesDisplayComponent implements OnInit,  AfterViewInit {
 
   viewModel$!: Observable<WorldViewModel>;
   showFiller  = true;
@@ -30,6 +30,10 @@ export class CountriesDisplayComponent {
   ngOnInit(): void {
     this.viewModel$ = this.store.select(WorldSelectors.getViewModel);
     this.viewModel$.subscribe(r => console.log(r))
+  }
+
+  ngAfterViewInit(): void {
+      
   }
 
   handleFilterChanged(event: string) {

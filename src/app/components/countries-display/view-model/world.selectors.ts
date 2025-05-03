@@ -6,8 +6,10 @@ export interface WorldViewModel {
     error: ErrorObj,
     isLoading: boolean,
     selectedCountry: Country | null,
-    world: World | null,
-    filterType: string
+    world: World | null | undefined,
+    filterType: string,
+    region: Region,
+    hierachy: any;
 }
 
 export class WorldSelectors {
@@ -17,21 +19,27 @@ export class WorldSelectors {
         WorldState.getLoading,
         WorldState.getSelectedCountry,
         WorldState.getWorldData,
-        WorldState.getFilterType
+        WorldState.getFilterType,
+        WorldState.getRegion,
+        WorldState.getHierachy
       ])
       static getViewModel(
         error: ErrorObj,
         isLoading: boolean,
         selectedCountry: Country | null,
         world: World | null,
-        filterType: string
+        filterType: string,
+        region: Region,
+        hierachy: any
       ) {
         return {
           error,
           isLoading,
           selectedCountry,
           world,
-          filterType
+          filterType,
+          region,
+          hierachy
         };
       }
       

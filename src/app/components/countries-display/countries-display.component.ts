@@ -8,6 +8,7 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import { ToggleSwitchComponent } from '../ui/toggle-switch/toggle-switch.component';
 import { WorldActions } from '../../store/actions/world-actions';
 import * as d3 from "d3";
+import { D3ContainerWorld } from '../ui/d3-container/d3-container.component';
 
 @Component({
   selector: 'app-countries-display',
@@ -15,7 +16,8 @@ import * as d3 from "d3";
     CommonModule,
     MatButtonModule,
     MatSidenavModule,
-    ToggleSwitchComponent
+    ToggleSwitchComponent,
+    D3ContainerWorld
   ],
   templateUrl: './countries-display.component.html',
   styleUrl: './countries-display.component.scss'
@@ -29,11 +31,10 @@ export class CountriesDisplayComponent implements OnInit,  AfterViewInit {
 
   ngOnInit(): void {
     this.viewModel$ = this.store.select(WorldSelectors.getViewModel);
-    this.viewModel$.subscribe(r => console.log(r))
   }
 
   ngAfterViewInit(): void {
-      
+
   }
 
   handleFilterChanged(event: string) {

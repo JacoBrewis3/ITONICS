@@ -11,13 +11,10 @@ import { Store } from '@ngxs/store';
 })
 export class CountryDetaillsComponent implements OnInit {
 
-  viewModel$!: Observable<WorldViewModel>;
-
   constructor(private store: Store) {}
 
   ngOnInit(): void {
-    this.viewModel$ = this.store.select(WorldSelectors.getViewModel);
-    this.viewModel$.subscribe(r => console.log(r))
+   
   }
 
 }

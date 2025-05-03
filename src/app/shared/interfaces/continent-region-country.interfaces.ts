@@ -6,9 +6,13 @@ export interface Country {
     land_area_km2: number;
 }
 
-export interface Region {
-    [regionName: string]: Country[];
-}
+export type Region = {
+    [region: string]: Country[];
+  };
 export interface World {
-    [continentName:string]: Region[];
+    [continentName:string]: Region;
 }
+
+type EuropeData = {
+    Europe: Region;
+};

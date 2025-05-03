@@ -1,8 +1,9 @@
 import { Action, Selector, State, StateContext, Store } from "@ngxs/store";
-import { Country, World } from "../../shared/interfaces/continent-region-country.interfaces";
+import { Country, Region, World } from "../../shared/interfaces/continent-region-country.interfaces";
 import { Injectable } from "@angular/core";
 import { WorldActions } from "../actions/world-actions";import { FetchDataService } from "../../services/fetch-data.service";
 import { catchError, of, tap } from "rxjs";
+import { convertToHierarchy } from "../../shared/utils/convert-json-to-d3";
  '../actions/world-actions/index';
 
 export interface WorldStateModel {
@@ -13,6 +14,8 @@ export interface WorldStateModel {
     error: boolean;
     errorMessage: string;
     filterType: string;
+    region: Region,
+    hierachy: any;
 }
 
 export interface ErrorObj {
@@ -29,7 +32,9 @@ export interface ErrorObj {
         world: null,
         error: false,
         errorMessage: '',
-        filterType: "area"
+        filterType: "area",
+        region: {},
+        hierachy: {}
     }
 })
 @Injectable()
@@ -67,6 +72,16 @@ export class WorldState {
         return state.filterType
     }
 
+    @Selector()
+    static getRegion(state: WorldStateModel): Region
+     {
+            return state.region;
+    }
+    @Selector()
+    static getHierachy(state: WorldStateModel) {
+        return state.hierachy
+    }
+
     @Action(WorldActions.Fetch)
     fetchWorld(ctx: StateContext<WorldStateModel>) {
 
@@ -89,8 +104,22 @@ export class WorldState {
 
     @Action(WorldActions.FetchSuccess)
     fetchSuccess(ctx: StateContext<WorldStateModel>, action: WorldActions.FetchSuccess) {
+
+
+            // map json data to d3 compatible
+            const europeData: Region = action.payload["Europe"];
+
+            const europeDataMapped = convertToHierarchy(europeData);
+            console.log(europeDataMapped);
+
+            if (!europeDataMapped) {
+                // [TODO] - dispatch error messaage
+                return;
+            }
+
             ctx.patchState({
-                world: action.payload ?? null,
+                region: europeData ?? null,
+                hierachy: europeDataMapped,
                 isLoading: false
             })
     }

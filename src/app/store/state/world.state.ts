@@ -4,6 +4,7 @@ import { Injectable } from "@angular/core";
 import { WorldActions } from "../actions/world-actions";import { FetchDataService } from "../../services/fetch-data.service";
 import { catchError, of, tap } from "rxjs";
 import { convertToHierarchy } from "../../shared/utils/convert-json-to-d3";
+import { HierarchyDatum } from "../../components/ui/d3-container/d3-container.component";
  '../actions/world-actions/index';
 
 export interface WorldStateModel {
@@ -15,7 +16,7 @@ export interface WorldStateModel {
     errorMessage: string;
     filterType: string;
     region: Region,
-    hierachy: any;
+    hierachy: HierarchyDatum;
 }
 
 export interface ErrorObj {
@@ -34,7 +35,10 @@ export interface ErrorObj {
         errorMessage: '',
         filterType: "area",
         region: {},
-        hierachy: {}
+        hierachy: {
+            children: [],
+            name: ''
+        }
     }
 })
 @Injectable()
@@ -78,7 +82,7 @@ export class WorldState {
             return state.region;
     }
     @Selector()
-    static getHierachy(state: WorldStateModel) {
+    static getHierachy(state: WorldStateModel): HierarchyDatum {
         return state.hierachy
     }
 

@@ -7,6 +7,7 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import { ToggleSwitchComponent } from '../ui/toggle-switch/toggle-switch.component';
 import { WorldActions } from '../../store/actions/world-actions';
+import * as d3 from "d3";
 
 @Component({
   selector: 'app-countries-display',

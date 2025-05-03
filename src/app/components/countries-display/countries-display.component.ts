@@ -5,13 +5,16 @@ import { WorldViewModel, WorldSelectors } from './view-model/world.selectors';
 import { CommonModule } from '@angular/common';
 import {MatButtonModule} from '@angular/material/button';
 import {MatSidenavModule} from '@angular/material/sidenav';
+import { ToggleSwitchComponent } from '../ui/toggle-switch/toggle-switch.component';
+import { WorldActions } from '../../store/actions/world-actions';
 
 @Component({
   selector: 'app-countries-display',
   imports: [
     CommonModule,
     MatButtonModule,
-    MatSidenavModule
+    MatSidenavModule,
+    ToggleSwitchComponent
   ],
   templateUrl: './countries-display.component.html',
   styleUrl: './countries-display.component.scss'
@@ -26,6 +29,10 @@ export class CountriesDisplayComponent {
   ngOnInit(): void {
     this.viewModel$ = this.store.select(WorldSelectors.getViewModel);
     this.viewModel$.subscribe(r => console.log(r))
+  }
+
+  handleFilterChanged(event: string) {
+        this.store.dispatch(new WorldActions.FilterChanged(event));
   }
 
 }

@@ -1,6 +1,6 @@
 @if (viewModel$ | async; as viewModel) {
-    <mat-drawer-container class="example-container" autosize>
-        <mat-drawer #drawer class="example-sidenav" mode="side">
+    <mat-drawer-container class="main-container" autosize>
+        <mat-drawer #drawer class="main-sidenav" mode="side">
           <p>Auto-resizing sidenav</p>
           @if (showFiller) {
             <p>Lorem, ipsum dolor sit amet consectetur.</p>
@@ -10,7 +10,12 @@
           </button>
         </mat-drawer>
       
-        <div class="example-sidenav-content">
+        <div class="main-sidenav-content">
+          <div class="countries-wrapper">
+            <div class="toggle-filter">
+              <app-toggle-switch (filterChanged)="handleFilterChanged($event)" [selectedFilter]="viewModel.filterType"></app-toggle-switch>
+            </div>
+          </div>
           <button type="button" mat-button (click)="drawer.toggle()">
             Toggle sidenav
           </button>

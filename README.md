@@ -1,3 +1,7 @@
+-- git repo ---
+https://github.com/JacoBrewis3/ITONICS.git
+ 
+
 --- instructions --
 
 run: npm i
@@ -31,4 +35,11 @@ There are 3 main states in the world.state:
 2. completed 
 3. preloading 
 
-To invoke an error rename the file in the 
+To invoke an error rename the file in the   private url = '/json/europe_population_enriched.json' to another test string
+
+Preloader state while loading is set with a setTimeout on 2 seconds to simulate longer loading time from a http response.
+
+on the main component: CountriesDisplayComponent - the selectors are  being pulled from a single state selector - see WorldSelectors, 
+
+
+

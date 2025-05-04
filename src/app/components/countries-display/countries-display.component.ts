@@ -1,6 +1,6 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Actions, ofActionDispatched, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
 import { WorldViewModel, WorldSelectors } from './view-model/world.selectors';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
@@ -26,12 +26,13 @@ import { ErrorCardComponent } from '../ui/error-card/error-card.component';
   templateUrl: './countries-display.component.html',
   styleUrl: './countries-display.component.scss'
 })
-export class CountriesDisplayComponent implements OnInit {
+export class CountriesDisplayComponent implements OnInit, OnDestroy{
 
   viewModel$!: Observable<WorldViewModel>;
   showFiller = true;
   @ViewChild('drawer')
   drawer!: MatSidenav;
+  private destroy$ = new Subject<void>();
 
   constructor(
     private store: Store,
@@ -43,7 +44,8 @@ export class CountriesDisplayComponent implements OnInit {
 
     this.actions$
     .pipe(
-      ofActionDispatched(WorldActions.CountrySelected)
+      ofActionDispatched(WorldActions.CountrySelected),
+      takeUntil(this.destroy$)
     )
     .subscribe(() => {
       this.drawer.open();
@@ -57,6 +59,11 @@ export class CountriesDisplayComponent implements OnInit {
   handleFilterChanged(event: FilterType) {
     this.drawer.close();
     this.store.dispatch(new WorldActions.FilterChanged(event));
+  }
+
+  ngOnDestroy(): void {
+      this.destroy$.next();
+      this.destroy$.complete();
   }
 
 }

@@ -2,7 +2,7 @@
     <h5>Area or population</h5>
     <form [formGroup]="toggleFilterForm">
         <mat-radio-group formControlName="filterType" aria-label="Select an option" (change)="onRadioChange($event)">
-            <mat-radio-button value="area">Area</mat-radio-button>
+            <mat-radio-button value="land_area_km2">Area</mat-radio-button>
             <mat-radio-button value="population" checked>Population</mat-radio-button>
           </mat-radio-group>
     </form>

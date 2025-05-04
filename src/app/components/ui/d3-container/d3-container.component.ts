@@ -8,7 +8,7 @@ import {
   OnDestroy
 } from '@angular/core';
 import * as d3 from 'd3';
-import { Country, Region, World } from '../../../shared/interfaces/continent-region-country.interfaces';
+import { Country, FilterType, Region, World } from '../../../shared/interfaces/continent-region-country.interfaces';
 import { Store } from '@ngxs/store';
 import { filter, map, Observable, Subject, Subscription, takeUntil } from 'rxjs';
 import { D3DataModel, D3Selectors } from '../view-model/d3.selectors.view-model';
@@ -46,14 +46,16 @@ export class D3ContainerWorld implements OnInit, OnDestroy {
     this.store
     .select(WorldSelectors.getViewModel)
     .pipe(
-      map(vm => vm.hierachy),
-      filter((h): h is Country => !!h && Array.isArray(h.children) && h.children.length > 0)
+      filter(vm => !!vm?.hierachy && Array.isArray(vm.hierachy.children) && vm.hierachy.children.length > 0)
     )
-    .subscribe(hierarchy => this.drawData(hierarchy));
+    .subscribe(vm => {
+      console.log(vm)
+      this.drawData(vm.hierachy, vm.filterType);
+    });
 
   }
 
-  private drawData(data: Country): void {
+  private drawData(data: Country,  filter: FilterType): void {
       const svg = d3.select(this.svgRef.nativeElement);
       svg.selectAll('*').remove();
   
@@ -62,7 +64,7 @@ export class D3ContainerWorld implements OnInit, OnDestroy {
   
       // Build D3 hierarchy and compute packing
       const root = d3.hierarchy<Country>(data)
-        .sum(d => d.population)
+        .sum(d => d[filter] ?? 0)
         .sort((a, b) => b.value! - a.value!);
   
       const packed = d3.pack<Country>()
@@ -85,7 +87,7 @@ export class D3ContainerWorld implements OnInit, OnDestroy {
       nodeGroups
         .append('circle')
         .attr('r', d => d.r)  // now d.r is number
-        .attr('fill', d => (d.children ? '#69b3a2' : '#40a9f3'))
+        .attr('fill', d => (d.children ? '#fc3298' : '#3e4d64'))
         .attr('stroke', '#fff');
 
         nodeGroups

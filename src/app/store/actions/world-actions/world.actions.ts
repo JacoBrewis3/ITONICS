@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from "@angular/common/http";
-import { Country, World } from "../../../shared/interfaces/continent-region-country.interfaces";
+import { Country, FilterType, World } from "../../../shared/interfaces/continent-region-country.interfaces";
 
 export class Fetch {
     static readonly type = '[World] - Fetch data';
@@ -17,7 +17,7 @@ export class FetchFailed {
 
 export class FilterChanged {
     static readonly type = '[Filter] - filter changed';
-    constructor(public payload: string) {}
+    constructor(public payload: FilterType) {}
 }
 
 export class CountrySelected {

@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatRadioChange, MatRadioModule } from '@angular/material/radio';
+import { FilterType } from '../../../shared/interfaces/continent-region-country.interfaces';
 @Component({
   selector: 'app-toggle-switch',
   imports: [
@@ -13,8 +14,8 @@ import { MatRadioChange, MatRadioModule } from '@angular/material/radio';
 export class ToggleSwitchComponent implements OnInit {
 
   toggleFilterForm!: FormGroup;
-  @Input() selectedFilter!: string;
-  @Output() filterChanged = new EventEmitter<string>();
+  @Input() selectedFilter!: FilterType;
+  @Output() filterChanged = new EventEmitter<FilterType>();
 
   constructor(private fb: FormBuilder) {}
 

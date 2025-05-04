@@ -17,3 +17,5 @@ export interface World {
 type EuropeData = {
     Europe: Region;
 };
+
+export type FilterType = 'population' | 'land_area_km2';

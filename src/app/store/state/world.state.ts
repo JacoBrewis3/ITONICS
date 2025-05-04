@@ -1,5 +1,5 @@
 import { Action, Selector, State, StateContext, Store } from "@ngxs/store";
-import { Country, Region, World } from "../../shared/interfaces/continent-region-country.interfaces";
+import { Country, FilterType, Region, World } from "../../shared/interfaces/continent-region-country.interfaces";
 import { Injectable } from "@angular/core";
 import { WorldActions } from "../actions/world-actions";import { FetchDataService } from "../../services/fetch-data.service";
 import { catchError, of, tap } from "rxjs";
@@ -14,7 +14,7 @@ export interface WorldStateModel {
     selectedCountry: Country | null
     error: boolean;
     errorMessage: string;
-    filterType: string;
+    filterType: FilterType;
     region: Region,
     hierachy: HierarchyDatum;
 }
@@ -33,7 +33,7 @@ export interface ErrorObj {
         world: null,
         error: false,
         errorMessage: '',
-        filterType: "area",
+        filterType: "population",
         region: {},
         hierachy: {
             children: [],
@@ -72,7 +72,7 @@ export class WorldState {
     }
 
     @Selector()
-    static getFilterType(state: WorldStateModel): string {
+    static getFilterType(state: WorldStateModel): FilterType {
         return state.filterType
     }
 
@@ -141,7 +141,7 @@ export class WorldState {
     filterChanged(ctx: StateContext<WorldStateModel>, action: WorldActions.FilterChanged) {
 
         ctx.patchState({
-            filterType: action.payload ?? 'area'
+            filterType: action.payload ?? 'population'
         })
 
     }

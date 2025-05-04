@@ -1,5 +1,5 @@
 import { Selector } from "@ngxs/store";
-import { Country, Region, World } from "../../../shared/interfaces/continent-region-country.interfaces";
+import { Country, FilterType, Region, World } from "../../../shared/interfaces/continent-region-country.interfaces";
 import { ErrorObj, WorldState } from "../../../store/state/world.state";
 
 export interface WorldViewModel {
@@ -7,7 +7,7 @@ export interface WorldViewModel {
     isLoading: boolean,
     selectedCountry: Country | null,
     world: World | null | undefined,
-    filterType: string,
+    filterType: FilterType,
     region: Region,
     hierachy: any;
 }
@@ -28,7 +28,7 @@ export class WorldSelectors {
         isLoading: boolean,
         selectedCountry: Country | null,
         world: World | null,
-        filterType: string,
+        filterType: FilterType,
         region: Region,
         hierachy: any
       ) {

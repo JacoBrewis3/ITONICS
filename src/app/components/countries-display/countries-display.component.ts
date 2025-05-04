@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { Actions, ofActionCompleted, ofActionDispatched, Store } from '@ngxs/store';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { Actions, ofActionDispatched, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { WorldViewModel, WorldSelectors } from './view-model/world.selectors';
 import { CommonModule } from '@angular/common';
@@ -7,8 +7,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { ToggleSwitchComponent } from '../ui/toggle-switch/toggle-switch.component';
 import { WorldActions } from '../../store/actions/world-actions';
-import * as d3 from "d3";
 import { D3ContainerWorld } from '../ui/d3-container/d3-container.component';
+import { FilterType } from '../../shared/interfaces/continent-region-country.interfaces';
+import { ErrorCardComponent } from '../ui/error-card/error-card.component';
 
 @Component({
   selector: 'app-countries-display',
@@ -17,7 +18,8 @@ import { D3ContainerWorld } from '../ui/d3-container/d3-container.component';
     MatButtonModule,
     MatSidenavModule,
     ToggleSwitchComponent,
-    D3ContainerWorld
+    D3ContainerWorld,
+    ErrorCardComponent
   ],
   templateUrl: './countries-display.component.html',
   styleUrl: './countries-display.component.scss'
@@ -26,7 +28,7 @@ export class CountriesDisplayComponent implements OnInit {
 
   viewModel$!: Observable<WorldViewModel>;
   showFiller = true;
-  @ViewChild('drawer',)
+  @ViewChild('drawer')
   drawer!: MatSidenav;
 
   constructor(
@@ -47,11 +49,11 @@ export class CountriesDisplayComponent implements OnInit {
 
   }
   closeSideNav() {
-    console.log('closing');
     this.drawer.close();
   }
 
-  handleFilterChanged(event: string) {
+  handleFilterChanged(event: FilterType) {
+    this.drawer.close();
     this.store.dispatch(new WorldActions.FilterChanged(event));
   }
 

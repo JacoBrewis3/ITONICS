@@ -1,43 +1,45 @@
 @if (viewModel$ | async; as viewModel) {
-    <mat-drawer-container class="main-container" autosize>
-        <mat-drawer #drawer class="main-sidenav" [opened]="!!viewModel.selectedCountry"  mode="side">
-          @if (viewModel.selectedCountry; as country) {
-            <div class="country-details">
-              <img [src]="country.flag" alt="Flag of {{ country.country }}" class="flag" />
-              <h2>{{ country.country }}</h2>
-              <p><strong>Population:</strong> {{ country.population | number }}</p>
-              <p><strong>Land Area:</strong> {{ country.land_area_km2 | number }} km²</p>
-              <p>
-                <strong>Wikipedia:</strong>&nbsp;
-                <a [href]="country.wikipedia" target="_blank">Learn more</a>
-              </p>
-              <div class="close-button">
-                <button (click)="closeSideNav()">x</button>
-              </div>
-             
-            </div>
-          }
-          
-        </mat-drawer>
-      
-        <div class="main-sidenav-content">
-          <div class="countries-wrapper">
-            <div class="toggle-filter">
-              <app-toggle-switch (filterChanged)="handleFilterChanged($event)" [selectedFilter]="viewModel.filterType"></app-toggle-switch>
-            </div>
-            @if (viewModel?.hierachy) {
-              <div class="d3-container">
-                <app-d3-container-world-container></app-d3-container-world-container>
-              </div>
-            }
-           
-          </div>
-          <button type="button" mat-button (click)="drawer.toggle()">
-            Toggle sidenav
-          </button>
-        </div>
-      
-      </mat-drawer-container>
+<mat-drawer-container class="main-container" autosize>
+  <mat-drawer #drawer class="main-sidenav" [opened]="!!viewModel.selectedCountry" mode="side">
+    @if (viewModel.selectedCountry; as country) {
+    <div class="country-details">
+      <img [src]="country.flag" alt="Flag of {{ country.country }}" class="flag" />
+      <h2>{{ country.country }}</h2>
+      <p><strong>Population:</strong> {{ country.population | number }}</p>
+      <p><strong>Land Area:</strong> {{ country.land_area_km2 | number }} km²</p>
+      <p>
+        <strong>Wikipedia:</strong>&nbsp;
+        <a [href]="country.wikipedia" target="_blank">Learn more</a>
+      </p>
+      <div class="close-button">
+
+        <a mat-flat-button (click)="closeSideNav()" target="_blank">x</a>
+
+      </div>
+
+    </div>
+    }
+
+  </mat-drawer>
+
+  <div class="main-sidenav-content">
+    <div class="countries-wrapper">
+      @if (viewModel?.hierachy && !viewModel.error.error) {
+      <div class="toggle-filter">
+        <app-toggle-switch (filterChanged)="handleFilterChanged($event)"
+          [selectedFilter]="viewModel.filterType"></app-toggle-switch>
+      </div>
+    
+      <div class="d3-container">
+        <app-d3-container-world-container></app-d3-container-world-container>
+      </div>
+      }
+      @if (viewModel.error) {
+        <app-error-card [errorObj]="viewModel.error"></app-error-card>
+      }
+
+    </div>
+  </div>
+
+</mat-drawer-container>
 }
-
-

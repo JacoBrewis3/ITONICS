@@ -10,10 +10,11 @@ import {
 import * as d3 from 'd3';
 import { Country, Region, World } from '../../../shared/interfaces/continent-region-country.interfaces';
 import { Store } from '@ngxs/store';
-import { Observable, Subject, Subscription, takeUntil } from 'rxjs';
+import { filter, map, Observable, Subject, Subscription, takeUntil } from 'rxjs';
 import { D3DataModel, D3Selectors } from '../view-model/d3.selectors.view-model';
 import { WorldActions } from '../../../store/actions/world-actions';
 import { HierarchyCircularNode, HierarchyNode } from 'd3';
+import { WorldSelectors } from '../../countries-display/view-model/world.selectors';
 
 export type HierarchyDatum = {
   name: string;
@@ -42,20 +43,17 @@ export class D3ContainerWorld implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.viewModel$ = this.store.select(D3Selectors.getViewModel);
 
-    this.viewModel$
-      .pipe(
-        takeUntil(this.destroy$)
-      )
-      .subscribe(data => {
-        // if (!data.hierachy) { return;}
-        this.drawData(data.hierachy);
-      })
+    this.store
+    .select(WorldSelectors.getViewModel)
+    .pipe(
+      map(vm => vm.hierachy),
+      filter((h): h is Country => !!h && Array.isArray(h.children) && h.children.length > 0)
+    )
+    .subscribe(hierarchy => this.drawData(hierarchy));
 
   }
 
   private drawData(data: Country): void {
-    console.log(data);
-    // if (data && data.country) {
       const svg = d3.select(this.svgRef.nativeElement);
       svg.selectAll('*').remove();
   
@@ -89,7 +87,16 @@ export class D3ContainerWorld implements OnInit, OnDestroy {
         .attr('r', d => d.r)  // now d.r is number
         .attr('fill', d => (d.children ? '#69b3a2' : '#40a9f3'))
         .attr('stroke', '#fff');
-    // }
+
+        nodeGroups
+        .filter(d => !d.children) // only countries
+        .append('text')
+        .text(d => d.data.country)
+        .attr('dy', '0.3em')
+        .style('text-anchor', 'middle')
+        .style('pointer-events', 'none')
+        .style('fill', '#fff')
+        .style('font-size', d => `${Math.min(2 * d.r, (2 * d.r) / d.data.country.length)}px`);
 
     
   }

@@ -22,36 +22,21 @@ import { D3ContainerWorld } from '../ui/d3-container/d3-container.component';
   templateUrl: './countries-display.component.html',
   styleUrl: './countries-display.component.scss'
 })
-export class CountriesDisplayComponent implements OnInit, AfterViewInit {
+export class CountriesDisplayComponent implements OnInit {
 
-   viewModel$!: Observable<WorldViewModel>;
+  viewModel$!: Observable<WorldViewModel>;
   showFiller = true;
   @ViewChild('drawer', { static: true })
   drawer!: MatSidenav;
 
   constructor(
-    private store: Store,
-    private actions$: Actions) { }
+    private store: Store) { }
 
   ngOnInit(): void {
     this.viewModel$ = this.store.select(WorldSelectors.getViewModel);
 
-    this.actions$
-    .pipe(ofActionDispatched(WorldActions.CountrySelected))
-    .subscribe(() => {
-      console.log('trigger drawer');
-      this.drawer.open();
-    })
-
   }
 
-  ngAfterViewInit(): void {
-
-    
-
-    // check if country selected;
-   
-  }
 
   handleFilterChanged(event: string) {
     this.store.dispatch(new WorldActions.FilterChanged(event));

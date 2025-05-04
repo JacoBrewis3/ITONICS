@@ -26,17 +26,30 @@ export class CountriesDisplayComponent implements OnInit {
 
   viewModel$!: Observable<WorldViewModel>;
   showFiller = true;
-  @ViewChild('drawer', { static: true })
+  @ViewChild('drawer',)
   drawer!: MatSidenav;
 
   constructor(
-    private store: Store) { }
+    private store: Store,
+    private actions$: Actions
+  ) { }
 
   ngOnInit(): void {
     this.viewModel$ = this.store.select(WorldSelectors.getViewModel);
 
-  }
+    this.actions$
+    .pipe(
+      ofActionDispatched(WorldActions.CountrySelected)
+    )
+    .subscribe(() => {
+      this.drawer.open();
+    })
 
+  }
+  closeSideNav() {
+    console.log('closing');
+    this.drawer.close();
+  }
 
   handleFilterChanged(event: string) {
     this.store.dispatch(new WorldActions.FilterChanged(event));

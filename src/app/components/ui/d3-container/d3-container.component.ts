@@ -47,15 +47,15 @@ export class D3ContainerWorld implements OnInit, OnDestroy {
         takeUntil(this.destroy$)
       )
       .subscribe(data => {
-        if (!data.hierachy) { return;}
+        // if (!data.hierachy) { return;}
         this.drawData(data.hierachy);
       })
 
   }
 
   private drawData(data: Country): void {
-
-    // if (data && data.population > 0) {
+    console.log(data);
+    // if (data && data.country) {
       const svg = d3.select(this.svgRef.nativeElement);
       svg.selectAll('*').remove();
   
@@ -80,10 +80,7 @@ export class D3ContainerWorld implements OnInit, OnDestroy {
         .attr('transform', d => `translate(${d.x},${d.y})`)
         .style('cursor', 'pointer')
         .on('click', (_, d) => {
-          // Dispatch the Country object and open sidenav
-          console.log(d.data);
-          // this.store.dispatch(new SelectCountry(d.data));
-          // this.sidenav.open();
+          this.store.dispatch(new WorldActions.CountrySelected(d.data));
         });
   
       // Draw circles

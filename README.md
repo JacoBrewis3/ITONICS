@@ -1,6 +1,6 @@
 -- git repo ---
 https://github.com/JacoBrewis3/ITONICS.git
- 
+
 
 --- instructions --
 
@@ -41,5 +41,4 @@ Preloader state while loading is set with a setTimeout on 2 seconds to simulate 
 
 on the main component: CountriesDisplayComponent - the selectors are  being pulled from a single state selector - see WorldSelectors, 
 
-
-
+the d3 component is also zoomable as a side note.

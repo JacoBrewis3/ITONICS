@@ -16,7 +16,6 @@
               <app-toggle-switch (filterChanged)="handleFilterChanged($event)" [selectedFilter]="viewModel.filterType"></app-toggle-switch>
             </div>
             @if (viewModel?.hierachy) {
-              <pre>{{ viewModel?.hierachy | json }}</pre>
               <div class="d3-container">
                 <app-d3-container-world-container></app-d3-container-world-container>
               </div>

@@ -8,10 +8,12 @@ import {
   OnDestroy
 } from '@angular/core';
 import * as d3 from 'd3';
-import { Region, World } from '../../../shared/interfaces/continent-region-country.interfaces';
+import { Country, Region, World } from '../../../shared/interfaces/continent-region-country.interfaces';
 import { Store } from '@ngxs/store';
 import { Observable, Subject, Subscription, takeUntil } from 'rxjs';
 import { D3DataModel, D3Selectors } from '../view-model/d3.selectors.view-model';
+import { WorldActions } from '../../../store/actions/world-actions';
+import { HierarchyCircularNode, HierarchyNode } from 'd3';
 
 export type HierarchyDatum = {
   name: string;
@@ -51,65 +53,48 @@ export class D3ContainerWorld implements OnInit, OnDestroy {
 
   }
 
-  private drawData(data: HierarchyDatum) {
-    // map data 
+  private drawData(data: Country): void {
 
-    if (data &&  data.children && data?.children?.length > 1) {
+    // if (data && data.population > 0) {
       const svg = d3.select(this.svgRef.nativeElement);
-      const width = 600;
-      const height = 600;
+      svg.selectAll('*').remove();
   
-      const root = d3
-        .hierarchy<HierarchyDatum>(data)
-        .sum(d => d.value || 0)
+      const width = +svg.attr('width');
+      const height = +svg.attr('height');
+  
+      // Build D3 hierarchy and compute packing
+      const root = d3.hierarchy<Country>(data)
+        .sum(d => d.population)
         .sort((a, b) => b.value! - a.value!);
   
-      console.log('Descendants:', root.descendants().map(d => ({
-        name: d.data.name,
-        value: d.value
-      })));
-  
-  
-      const packedRoot = d3.pack<HierarchyDatum>()
+      const packed = d3.pack<Country>()
         .size([width, height])
         .padding(5)(root);
   
-      const nodes = svg
-        .selectAll('circle')
-        .data(packedRoot.descendants()) // Type: PackedNode[]
-        .enter()
-        .append('circle')
-        .attr('cx', d => d.x)
-        .attr('cy', d => d.y)
-        .attr('r', d => d.r)
-        .attr('fill', d => d.children ? '#69b3a2' : '#40a9f3')
-        .attr('stroke', '#fff');
-  
+      // Create <g> for each node with the correct packed node type
       const nodeGroups = svg
-        .selectAll('g')
-        .data(packedRoot.descendants())
+        .selectAll<SVGGElement, HierarchyCircularNode<Country>>('g')
+        .data(packed.descendants())
         .enter()
         .append('g')
-        .attr('transform', d => `translate(${d.x}, ${d.y})`);
+        .attr('transform', d => `translate(${d.x},${d.y})`)
+        .style('cursor', 'pointer')
+        .on('click', (_, d) => {
+          // Dispatch the Country object and open sidenav
+          console.log(d.data);
+          // this.store.dispatch(new SelectCountry(d.data));
+          // this.sidenav.open();
+        });
   
+      // Draw circles
       nodeGroups
         .append('circle')
-        .attr('r', d => d.r)
-        .attr('fill', d => d.children ? '#69b3a2' : '#40a9f3')
+        .attr('r', d => d.r)  // now d.r is number
+        .attr('fill', d => (d.children ? '#69b3a2' : '#40a9f3'))
         .attr('stroke', '#fff');
-  
-      nodeGroups
-        .filter(d => !d.children) // only label leaf nodes (countries)
-        .append('text')
-        .text(d => d.data.name)
-        .attr('dy', '0.3em')
-        .style('text-anchor', 'middle')
-        .style('pointer-events', 'none') // so clicks go through the text
-        .style('fill', '#fff')
-        .style('font-size', d => `${Math.min(2 * d.r, (2 * d.r) / d.data.name.length)}px`);
-    }
+    // }
 
-   
+    
   }
 
   ngOnDestroy(): void {

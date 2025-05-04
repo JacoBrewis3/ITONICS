@@ -145,4 +145,13 @@ export class WorldState {
         })
 
     }
+
+    @Action(WorldActions.CountrySelected)
+    countrySelected(ctx: StateContext<WorldStateModel>, action: WorldActions.CountrySelected) {
+        console.log(action.payload);
+
+        ctx.patchState({
+            selectedCountry: action?.payload ?? {}
+        })
+    }
 }

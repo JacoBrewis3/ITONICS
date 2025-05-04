@@ -4,6 +4,7 @@ export interface Country {
     wikipedia: string;
     flag: string;
     land_area_km2: number;
+    value?: number;
 }
 
 export type Region = {

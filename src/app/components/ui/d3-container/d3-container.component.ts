@@ -55,53 +55,66 @@ export class D3ContainerWorld implements OnInit, OnDestroy {
 
   }
 
-  private drawData(data: Country,  filter: FilterType): void {
-      const svg = d3.select(this.svgRef.nativeElement);
-      svg.selectAll('*').remove();
+  private drawData(data: Country, filter: FilterType): void {
+    const svg = d3.select(this.svgRef.nativeElement);
+    svg.selectAll('*').remove();
   
-      const width = +svg.attr('width');
-      const height = +svg.attr('height');
+    const width = +svg.attr('width');
+    const height = +svg.attr('height');
   
-      // Build D3 hierarchy and compute packing
-      const root = d3.hierarchy<Country>(data)
-        .sum(d => d[filter] ?? 0)
-        .sort((a, b) => b.value! - a.value!);
+    // Create a group for zoomable content
+    const zoomGroup = svg.append('g').attr('class', 'zoom-group');
   
-      const packed = d3.pack<Country>()
-        .size([width, height])
-        .padding(5)(root);
-  
-      // Create <g> for each node with the correct packed node type
-      const nodeGroups = svg
-        .selectAll<SVGGElement, HierarchyCircularNode<Country>>('g')
-        .data(packed.descendants())
-        .enter()
-        .append('g')
-        .attr('transform', d => `translate(${d.x},${d.y})`)
-        .style('cursor', 'pointer')
-        .on('click', (_, d) => {
-          this.store.dispatch(new WorldActions.CountrySelected(d.data));
-        });
-  
-      // Draw circles
-      nodeGroups
-        .append('circle')
-        .attr('r', d => d.r)  // now d.r is number
-        .attr('fill', d => (d.children ? '#fc3298' : '#3e4d64'))
-        .attr('stroke', '#fff');
+    // Set up zoom behavior
+    const zoom = d3.zoom<SVGSVGElement, unknown>()
+      .scaleExtent([0.5, 5]) // zoom scale limits
+      .on('zoom', (event) => {
+        zoomGroup.attr('transform', event.transform);
+      });
 
-        nodeGroups
-        .filter(d => !d.children) // only countries
-        .append('text')
-        .text(d => d.data.country)
-        .attr('dy', '0.3em')
-        .style('text-anchor', 'middle')
-        .style('pointer-events', 'none')
-        .style('fill', '#fff')
-        .style('font-size', d => `${Math.min(2 * d.r, (2 * d.r) / d.data.country.length)}px`);
-
-    
+      
+  
+    // Attach zoom behavior to the SVG
+    (svg as unknown as d3.Selection<SVGSVGElement, unknown, null, undefined>).call(zoom);
+  
+    // Build D3 hierarchy and compute packing
+    const root = d3.hierarchy<Country>(data)
+      .sum(d => d[filter] ?? 0)
+      .sort((a, b) => b.value! - a.value!);
+  
+    const packed = d3.pack<Country>()
+      .size([width, height])
+      .padding(5)(root);
+  
+    // Create nodes inside the zoom group
+    const nodeGroups = zoomGroup
+      .selectAll<SVGGElement, HierarchyCircularNode<Country>>('g')
+      .data(packed.descendants())
+      .enter()
+      .append('g')
+      .attr('transform', d => `translate(${d.x},${d.y})`)
+      .style('cursor', 'pointer')
+      .on('click', (_, d) => {
+        this.store.dispatch(new WorldActions.CountrySelected(d.data));
+      });
+  
+    nodeGroups
+      .append('circle')
+      .attr('r', d => d.r)
+      .attr('fill', d => (d.children ? '#fc3298' : '#3e4d64'))
+      .attr('stroke', '#fff');
+  
+    nodeGroups
+      .filter(d => !d.children)
+      .append('text')
+      .text(d => d.data.country)
+      .attr('dy', '0.3em')
+      .style('text-anchor', 'middle')
+      .style('pointer-events', 'none')
+      .style('fill', '#fff')
+      .style('font-size', d => `${Math.min(2 * d.r, (2 * d.r) / d.data.country.length)}px`);
   }
+  
 
   ngOnDestroy(): void {
     this.destroy$.next();

@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class FetchDataService {
 
-  private url = '/json/europe_populat22ion_enriched.json'
+  private url = '/json/europe_population_enriched.json'
 
   constructor(private httpClient: HttpClient) { }
 

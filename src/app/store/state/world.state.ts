@@ -1,11 +1,11 @@
 import { Action, Selector, State, StateContext, Store } from "@ngxs/store";
 import { Country, FilterType, Region, World } from "../../shared/interfaces/continent-region-country.interfaces";
 import { Injectable } from "@angular/core";
-import { WorldActions } from "../actions/world-actions";import { FetchDataService } from "../../services/fetch-data.service";
+import { WorldActions } from "../actions/world-actions"; import { FetchDataService } from "../../services/fetch-data.service";
 import { catchError, of, tap } from "rxjs";
 import { convertToHierarchy } from "../../shared/utils/convert-json-to-d3";
 import { HierarchyDatum } from "../../components/ui/d3-container/d3-container.component";
- '../actions/world-actions/index';
+'../actions/world-actions/index';
 
 export interface WorldStateModel {
     world: World | null;
@@ -47,11 +47,11 @@ export class WorldState {
     constructor(
         private dataServices: FetchDataService,
         private store: Store
-    ) {}
-    
+    ) { }
+
     @Selector()
     static getWorldData(state: WorldStateModel): World | null {
-            return state.world;
+        return state.world;
     }
 
     @Selector()
@@ -59,7 +59,7 @@ export class WorldState {
         return state.isLoading;
     }
 
-    @Selector() 
+    @Selector()
     static getError(state: WorldStateModel): ErrorObj {
         return {
             error: state.error,
@@ -77,9 +77,8 @@ export class WorldState {
     }
 
     @Selector()
-    static getRegion(state: WorldStateModel): Region
-     {
-            return state.region;
+    static getRegion(state: WorldStateModel): Region {
+        return state.region;
     }
     @Selector()
     static getHierachy(state: WorldStateModel): HierarchyDatum {
@@ -94,22 +93,22 @@ export class WorldState {
         })
 
         return this.dataServices.fetchData()
-        .pipe(
-            tap(results => {
-                this.store.dispatch(new WorldActions.FetchSuccess(results as World))
-            }),
-            catchError(error => {
-                this.store.dispatch(new WorldActions.FetchFailed(error))
-                return of([])
-            })
-        )
+            .pipe(
+                tap(results => {
+                    this.store.dispatch(new WorldActions.FetchSuccess(results as World))
+                }),
+                catchError(error => {
+                    this.store.dispatch(new WorldActions.FetchFailed(error))
+                    return of([])
+                })
+            )
 
     }
 
     @Action(WorldActions.FetchSuccess)
     fetchSuccess(ctx: StateContext<WorldStateModel>, action: WorldActions.FetchSuccess) {
-
-
+        // simulate loading state - fetching http
+        setTimeout(() => {
             // map json data to d3 compatible
             const europeData: Region = action.payload["Europe"];
 
@@ -126,15 +125,18 @@ export class WorldState {
                 hierachy: europeDataMapped,
                 isLoading: false
             })
+        }, 2000)
+
     }
 
     @Action(WorldActions.FetchFailed)
     fetchFailed(ctx: StateContext<WorldStateModel>, action: WorldActions.FetchFailed) {
 
-            ctx.patchState({
-                error: true,
-                errorMessage: action.payload.message
-            })
+        ctx.patchState({
+            error: true,
+            isLoading: false,
+            errorMessage: action.payload.message
+        })
     }
 
     @Action(WorldActions.FilterChanged)

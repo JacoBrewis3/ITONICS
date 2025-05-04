@@ -5,6 +5,7 @@ import { WorldViewModel, WorldSelectors } from './view-model/world.selectors';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { ToggleSwitchComponent } from '../ui/toggle-switch/toggle-switch.component';
 import { WorldActions } from '../../store/actions/world-actions';
 import { D3ContainerWorld } from '../ui/d3-container/d3-container.component';
@@ -19,7 +20,8 @@ import { ErrorCardComponent } from '../ui/error-card/error-card.component';
     MatSidenavModule,
     ToggleSwitchComponent,
     D3ContainerWorld,
-    ErrorCardComponent
+    ErrorCardComponent,
+    MatProgressSpinnerModule
   ],
   templateUrl: './countries-display.component.html',
   styleUrl: './countries-display.component.scss'

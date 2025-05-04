@@ -22,3 +22,12 @@
     top: 15px;
     right: 15px;
 }
+
+.preloader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%; // or a fixed height like 300px depending on your layout
+    width: 100%;
+    margin: 50px 0px;
+  }

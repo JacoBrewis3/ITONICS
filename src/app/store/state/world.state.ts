@@ -113,10 +113,8 @@ export class WorldState {
             const europeData: Region = action.payload["Europe"];
 
             const europeDataMapped = convertToHierarchy(europeData);
-            console.log(europeDataMapped);
 
             if (!europeDataMapped) {
-                // [TODO] - dispatch error messaage
                 return;
             }
 

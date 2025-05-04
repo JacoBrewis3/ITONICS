@@ -3,11 +3,15 @@ import {
   ElementRef,
   ViewChild,
   AfterViewInit,
-  Input
+  Input,
+  OnInit,
+  OnDestroy
 } from '@angular/core';
 import * as d3 from 'd3';
 import { Region, World } from '../../../shared/interfaces/continent-region-country.interfaces';
 import { Store } from '@ngxs/store';
+import { Observable, Subject, Subscription, takeUntil } from 'rxjs';
+import { D3DataModel, D3Selectors } from '../view-model/d3.selectors.view-model';
 
 export type HierarchyDatum = {
   name: string;
@@ -22,13 +26,29 @@ type PackedNode = d3.HierarchyCircularNode<HierarchyDatum>;
   templateUrl: './d3-container.component.html',
   styleUrls: ['./d3-container.component.scss']
 })
-export class D3ContainerWorld implements AfterViewInit {
+export class D3ContainerWorld implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('svg', { static: true }) svgRef!: ElementRef<SVGElement>;
 
   @Input() hierachy!: HierarchyDatum;
 
+  viewModel$!: Observable<D3DataModel>
+  destroy$ =  new Subject<void>();
+
   constructor(private store: Store) {}
+
+  ngOnInit(): void {
+      this.viewModel$ = this.store.select(D3Selectors.getViewModel);
+
+      this.viewModel$
+      .pipe(
+        takeUntil(this.destroy$)
+      )
+      .subscribe(data => {
+        this.hierachy = data.hierachy
+      })
+
+  }
 
   ngAfterViewInit(): void {
 
@@ -90,6 +110,11 @@ export class D3ContainerWorld implements AfterViewInit {
     //   .style('fill', '#fff')
     //   .style('font-size', d => `${Math.min(2 * d.r, (2 * d.r) / d.data.name.length)}px`);
 
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
 
